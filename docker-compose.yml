@@ -30,6 +30,47 @@ services:
     container_name: ordercase-redis
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  ordering-api:
+    build:
+      context: .
+      dockerfile: src/Services/Ordering/OrderCase.Ordering.Api/Dockerfile
+    container_name: ordercase-ordering-api
+    ports:
+      - "8080:8080"
+    environment:
+      ConnectionStrings__OrderingDb: "Host=postgres;Port=5432;Database=orderdb;Username=postgres;Password=postgres"
+      ConnectionStrings__Redis: "redis:6379"
+      RabbitMq__Host: "rabbitmq"
+      RabbitMq__Port: "5672"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: on-failure
+
+  processing-worker:
+    build:
+      context: .
+      dockerfile: src/Services/Processing/OrderCase.Processing.Worker/Dockerfile
+    container_name: ordercase-processing-worker
+    environment:
+      ConnectionStrings__ProcessingDb: "Host=postgres;Port=5432;Database=processingdb;Username=postgres;Password=postgres"
+      RabbitMq__Host: "rabbitmq"
+      RabbitMq__Port: "5672"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
 
 volumes:
   postgres-data:
