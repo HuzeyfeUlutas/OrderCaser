@@ -7,6 +7,7 @@ using OrderCase.Ordering.Api.Authentication;
 using OrderCase.Ordering.Api.ExceptionHandling;
 using OrderCase.Ordering.Api.Middlewares;
 using OrderCase.Ordering.Api.Services;
+using OrderCase.Ordering.Api.Subscribers;
 using OrderCase.Ordering.Application;
 using OrderCase.Ordering.Application.Abstractions.Services;
 using OrderCase.Ordering.Infrastructure;
@@ -69,6 +70,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<CurrentUserService>();
 builder.Services.AddScoped<ICurrentUserService>(sp => sp.GetRequiredService<CurrentUserService>());
 builder.Services.AddScoped<IAuditUserProvider>(sp => sp.GetRequiredService<CurrentUserService>());
+
+// --- Subscribers ---
+builder.Services.AddTransient<OrderStatusSubscriber>();
 
 // --- Layers ---
 var connectionString = builder.Configuration.GetConnectionString("OrderingDb")

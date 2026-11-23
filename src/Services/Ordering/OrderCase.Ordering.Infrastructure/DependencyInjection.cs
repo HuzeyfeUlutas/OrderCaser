@@ -63,8 +63,8 @@ public static class DependencyInjection
                 rabbit.UserName = configuration["RabbitMq:Username"] ?? "guest";
                 rabbit.Password = configuration["RabbitMq:Password"] ?? "guest";
             });
-
-            options.DefaultGroupName = "ordering-service";
+            
+            options.DefaultGroupName = ConsumerGroups.Ordering;
             options.FailedRetryCount = 5;
             options.FailedRetryInterval = 10;
 
