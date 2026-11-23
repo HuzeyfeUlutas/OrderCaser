@@ -1,4 +1,5 @@
 using MediatR;
+using OrderCase.Ordering.Application.Abstractions.Caching;
 using OrderCase.Ordering.Application.Common.Requests;
 using OrderCase.Ordering.Domain.Orders;
 
@@ -8,4 +9,8 @@ public sealed record CreateOrderCommand(
     string UserId,
     string ProductId,
     int Quantity,
-    PaymentMethod PaymentMethod) : IRequest<CreateOrderResult>, ITransactionalRequest;
+    PaymentMethod PaymentMethod)
+    : IRequest<CreateOrderResult>, ITransactionalRequest, ICacheInvalidatingRequest
+{
+    public IEnumerable<string> CacheKeysToInvalidate => [OrderCacheKeys.ByUser(UserId)];
+}

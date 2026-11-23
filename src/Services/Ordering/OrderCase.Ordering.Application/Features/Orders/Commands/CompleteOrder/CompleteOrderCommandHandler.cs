@@ -1,12 +1,14 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using OrderCase.Ordering.Application.Abstractions.Caching;
 using OrderCase.Ordering.Persistence;
 
 namespace OrderCase.Ordering.Application.Features.Orders.Commands.CompleteOrder;
 
 public sealed class CompleteOrderCommandHandler(
     OrderingDbContext dbContext,
+    ICacheInvalidator cacheInvalidator,
     ILogger<CompleteOrderCommandHandler> logger)
     : IRequestHandler<CompleteOrderCommand>
 {
@@ -22,6 +24,7 @@ public sealed class CompleteOrderCommandHandler(
         }
 
         order.Complete();
+        cacheInvalidator.Invalidate(OrderCacheKeys.ByUser(order.UserId));
 
         logger.LogInformation("Order {OrderId} marked as completed", order.Id);
     }

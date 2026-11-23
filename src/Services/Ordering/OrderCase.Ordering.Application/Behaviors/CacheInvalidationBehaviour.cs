@@ -4,7 +4,9 @@ using OrderCase.Ordering.Application.Common.Requests;
 
 namespace OrderCase.Ordering.Application.Behaviors;
 
-public sealed class CacheInvalidationBehavior<TRequest, TResponse>(ICacheService cacheService)
+public sealed class CacheInvalidationBehavior<TRequest, TResponse>(
+    ICacheService cacheService,
+    ICacheInvalidator cacheInvalidator)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
 {
@@ -15,11 +17,13 @@ public sealed class CacheInvalidationBehavior<TRequest, TResponse>(ICacheService
     {
         var response = await next(cancellationToken);
 
+        var keys = new HashSet<string>(cacheInvalidator.PendingKeys);
+
         if (request is ICacheInvalidatingRequest cacheInvalidatingRequest)
-        {
-            foreach (var key in cacheInvalidatingRequest.CacheKeysToInvalidate)
-                await cacheService.RemoveAsync(key, cancellationToken);
-        }
+            keys.UnionWith(cacheInvalidatingRequest.CacheKeysToInvalidate);
+
+        foreach (var key in keys)
+            await cacheService.RemoveAsync(key, cancellationToken);
 
         return response;
     }

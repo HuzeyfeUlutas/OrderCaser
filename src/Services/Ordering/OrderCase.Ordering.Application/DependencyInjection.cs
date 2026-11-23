@@ -1,6 +1,8 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using OrderCase.Ordering.Application.Abstractions.Caching;
 using OrderCase.Ordering.Application.Behaviors;
+using OrderCase.Ordering.Application.Common.Caching;
 
 namespace OrderCase.Ordering.Application;
 
@@ -19,6 +21,7 @@ public static class DependencyInjection
             cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
         });
 
+        services.AddScoped<ICacheInvalidator, CacheInvalidator>();
         services.AddValidatorsFromAssembly(assembly);
 
         return services;

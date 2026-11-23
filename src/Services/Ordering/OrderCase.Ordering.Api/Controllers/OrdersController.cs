@@ -8,6 +8,7 @@ using OrderCase.Ordering.Application.Features.Orders.Commands.CreateOrder;
 using OrderCase.Ordering.Application.Features.Orders.Commands.DeleteOrder;
 using OrderCase.Ordering.Application.Features.Orders.Queries.GetOrderById;
 using OrderCase.Ordering.Application.Features.Orders.Queries.GetOrders;
+using OrderCase.Ordering.Application.Features.Orders.Queries.GetOrdersByUserId;
 
 namespace OrderCase.Ordering.Api.Controllers;
 
@@ -63,5 +64,14 @@ public sealed class OrdersController(ISender sender) : ControllerBase
     {
         await sender.Send(new DeleteOrderCommand(id), cancellationToken);
         return NoContent();
+    }
+    
+    [HttpGet("{userId}")]
+    [ProducesResponseType(typeof(IReadOnlyList<OrderResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetByUserId(string userId, CancellationToken cancellationToken)
+    {
+        var response = await sender.Send(new GetOrdersByUserIdQuery(userId), cancellationToken);
+        return Ok(response);
     }
 }
