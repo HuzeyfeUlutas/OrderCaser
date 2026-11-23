@@ -23,6 +23,7 @@ builder.Host.UseSerilog((_, _, logger) => logger
     .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
     .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft.AspNetCore.DataProtection", LogEventLevel.Error)
     .Enrich.FromLogContext()
     .Enrich.WithProperty("Service", "Ordering.Api")
     .WriteTo.Console(outputTemplate:
