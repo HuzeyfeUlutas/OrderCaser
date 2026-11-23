@@ -3,11 +3,13 @@
   <ItemGroup>
     <ProjectReference Include="..\OrderCase.Processing.Domain\OrderCase.Processing.Domain.csproj" />
     <ProjectReference Include="..\..\..\Shared\OrderCase.Contracts\OrderCase.Contracts.csproj" />
+    <ProjectReference Include="..\OrderCase.Processing.Persistence\OrderCase.Processing.Persistence.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
     <PackageReference Include="MediatR" Version="12.*" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.*" />
   </ItemGroup>
 
   <PropertyGroup>
