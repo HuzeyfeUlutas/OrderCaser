@@ -60,4 +60,10 @@ public sealed class Order : AuditableEntity
         Status = OrderStatus.Failed;
         FailureReason = reason;
     }
+    
+    public void EnsureCanBeDeleted()
+    {
+        if (Status == OrderStatus.Pending)
+            throw new DomainException("Pending orders cannot be deleted while they are being processed.");
+    }
 } 

@@ -107,4 +107,25 @@ public class OrderTests
 
         act.Should().Throw<DomainException>();
     }
+    
+    [Fact]
+    public void EnsureCanBeDeleted_WhenPending_ThrowsDomainException()
+    {
+        var order = CreateValidOrder();
+
+        var act = () => order.EnsureCanBeDeleted();
+
+        act.Should().Throw<DomainException>();
+    }
+
+    [Fact]
+    public void EnsureCanBeDeleted_WhenCompleted_DoesNotThrow()
+    {
+        var order = CreateValidOrder();
+        order.Complete();
+
+        var act = () => order.EnsureCanBeDeleted();
+
+        act.Should().NotThrow();
+    }
 }
